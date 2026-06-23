@@ -16,6 +16,10 @@ public objetos(int durabilidad, ArrayList<String> encantamiento, String nombre) 
 
 
 
+
+
+
+
 public int getDurabilidad() {
     return durabilidad;
 }
@@ -53,7 +57,7 @@ public void setNombre(String nombre) {
 
 
 public abstract int Desgaste();
-public abstract String encantar();
+public abstract String encantar(String encantamiento);
 
 
     
