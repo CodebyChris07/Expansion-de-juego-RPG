@@ -1,22 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
- */
 package problema.pkg1probl_juegoderoles;
 
 import java.util.Scanner;
+import problema.pkg1probl_juegoderoles.Inventario.armas.espada;
+import problema.pkg1probl_juegoderoles.Inventario.armas.arco;
+import problema.pkg1probl_juegoderoles.Inventario.armas.baston;
 
-/**
- *
- * @author ASUS
- */
 public class Problema1_juegoDeRoles {
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
-        // TODO code application logic here
         Scanner entrada = new Scanner(System.in);
 
         System.out.println("=========================================");
@@ -24,7 +15,7 @@ public class Problema1_juegoDeRoles {
         System.out.println("=========================================");
 
         // ---------------------------------------------------------
-        // 1. REGISTRO DEL JUGADOR 1 
+        // 1. REGISTRO DEL JUGADOR 1
         // ---------------------------------------------------------
         System.out.print("\nIngrese el nombre del Jugador 1: ");
         String nombreU1 = entrada.nextLine();
@@ -32,15 +23,9 @@ public class Problema1_juegoDeRoles {
 
         System.out.print("¿Cuántos personajes deseas crear para tu equipo? (1 a 5): ");
         int cant1 = entrada.nextInt();
-        entrada.nextLine(); // Limpiar el buffer
-
-        // Validación básica por si el usuario pone más de 5 o menos de 1
-        if (cant1 > 5) {
-            cant1 = 5;
-        }
-        if (cant1 < 1) {
-            cant1 = 1;
-        }
+        entrada.nextLine();
+        if (cant1 > 5) cant1 = 5;
+        if (cant1 < 1) cant1 = 1;
 
         System.out.println("Armando equipo para " + pablo.getNombreUsuario() + "...");
 
@@ -51,32 +36,38 @@ public class Problema1_juegoDeRoles {
             System.out.println("3. Arquero");
             System.out.print("Elija la clase (1-3): ");
             int opcion = entrada.nextInt();
-            entrada.nextLine(); // Limpieza de buffer
+            entrada.nextLine();
 
             System.out.print("Nombre del personaje: ");
             String nombrePer = entrada.nextLine();
             String idPer = "P1-" + i;
 
             if (opcion == 1) {
-                Problema1_Guerrero g = new Problema1_Guerrero("Espada", 20, 15, idPer, nombrePer);
+                System.out.print("Material de la espada (hierro/diamante/netherita): ");
+                String material = entrada.nextLine();
+                espada esp = new espada(nombrePer + "-Espada", material);
+                Problema1_Guerrero g = new Problema1_Guerrero(20, 15, idPer, nombrePer, esp);
                 pablo.agregarPersonaje(g);
             } else if (opcion == 2) {
                 System.out.print("Elemento (Fuego/Agua/Tierra/Aire): ");
                 String elemento = entrada.nextLine();
-                Problema1_Mago m = new Problema1_Mago(50, elemento, "Bastón", 12, 18, idPer, nombrePer);
+                baston bas = new baston("Bastón de " + elemento, elemento, 12);
+                Problema1_Mago m = new Problema1_Mago(50, elemento, 12, 18, idPer, nombrePer, bas);
                 pablo.agregarPersonaje(m);
             } else if (opcion == 3) {
-                Problema1_Arquero a = new Problema1_Arquero(20, 15, "Arco", 14, 20, idPer, nombrePer);
+                arco arc = new arco("Arco", 8, "Largo", 2);
+                Problema1_Arquero a = new Problema1_Arquero(20, 15, 14, 20, idPer, nombrePer, arc);
                 pablo.agregarPersonaje(a);
             } else {
                 System.out.println("Opción no válida. Se asigna un Guerrero por defecto.");
-                Problema1_Guerrero g = new Problema1_Guerrero("Espada", 20, 15, idPer, nombrePer);
+                espada esp = new espada(nombrePer + "-Espada", "hierro");
+                Problema1_Guerrero g = new Problema1_Guerrero(20, 15, idPer, nombrePer, esp);
                 pablo.agregarPersonaje(g);
             }
         }
 
         // ---------------------------------------------------------
-        // 2. REGISTRO DEL JUGADOR 2 (Dinámico)
+        // 2. REGISTRO DEL JUGADOR 2
         // ---------------------------------------------------------
         System.out.print("\nIngrese el nombre del Jugador 2: ");
         String nombreU2 = entrada.nextLine();
@@ -84,14 +75,9 @@ public class Problema1_juegoDeRoles {
 
         System.out.print("¿Cuántos personajes deseas crear para tu equipo? (1 a 5): ");
         int cant2 = entrada.nextInt();
-        entrada.nextLine(); // Limpieza de buffer
-
-        if (cant2 > 5) {
-            cant2 = 5;
-        }
-        if (cant2 < 1) {
-            cant2 = 1;
-        }
+        entrada.nextLine();
+        if (cant2 > 5) cant2 = 5;
+        if (cant2 < 1) cant2 = 1;
 
         System.out.println("Armando equipo para " + ana.getNombreUsuario() + "...");
 
@@ -102,32 +88,38 @@ public class Problema1_juegoDeRoles {
             System.out.println("3. Arquero");
             System.out.print("Elija la clase (1-3): ");
             int opcion = entrada.nextInt();
-            entrada.nextLine(); // Limpiar el buffer
+            entrada.nextLine();
 
             System.out.print("Nombre del personaje: ");
             String nombrePer = entrada.nextLine();
             String idPer = "P2-" + i;
 
             if (opcion == 1) {
-                Problema1_Guerrero g = new Problema1_Guerrero("Hacha", 18, 14, idPer, nombrePer);
+                System.out.print("Material de la espada (hierro/diamante/netherita): ");
+                String material = entrada.nextLine();
+                espada esp = new espada(nombrePer + "-Espada", material);
+                Problema1_Guerrero g = new Problema1_Guerrero(18, 14, idPer, nombrePer, esp);
                 ana.agregarPersonaje(g);
             } else if (opcion == 2) {
                 System.out.print("Elemento (Fuego/Agua/Tierra/Aire): ");
                 String elemento = entrada.nextLine();
-                Problema1_Mago m = new Problema1_Mago(40, elemento, "Vara", 10, 20, idPer, nombrePer);
+                baston bas = new baston("Bastón de " + elemento, elemento, 10);
+                Problema1_Mago m = new Problema1_Mago(40, elemento, 10, 20, idPer, nombrePer, bas);
                 ana.agregarPersonaje(m);
             } else if (opcion == 3) {
-                Problema1_Arquero a = new Problema1_Arquero(25, 12, "Ballesta", 15, 15, idPer, nombrePer);
+                arco arc = new arco("Arco", 8, "Largo", 2);
+                Problema1_Arquero a = new Problema1_Arquero(25, 12, 15, 15, idPer, nombrePer, arc);
                 ana.agregarPersonaje(a);
             } else {
                 System.out.println("Opción no válida. Se asigna un Guerrero por defecto.");
-                Problema1_Guerrero g = new Problema1_Guerrero("Hacha", 18, 14, idPer, nombrePer);
+                espada esp = new espada(nombrePer + "-Espada", "hierro");
+                Problema1_Guerrero g = new Problema1_Guerrero(18, 14, idPer, nombrePer, esp);
                 ana.agregarPersonaje(g);
             }
         }
 
         // ---------------------------------------------------------
-        // 3. MOSTRAR EQUIPOS INICIALES Y COMBATIR
+        // 3. MOSTRAR EQUIPOS Y COMBATIR
         // ---------------------------------------------------------
         System.out.println("\n--- EQUIPOS REGISTRADOS ---");
         pablo.mostrarPersonajes();
@@ -136,11 +128,10 @@ public class Problema1_juegoDeRoles {
         System.out.println("\nPresione ENTER para iniciar la Batalla Aleatoria...");
         entrada.nextLine();
 
-        // Llamamos a la clase de combate
         Problema1_Combate.batallaAleatoria(pablo, ana);
 
         // ---------------------------------------------------------
-        // 4. MOSTRAR ESTADÍSTICAS FINALES
+        // 4. ESTADÍSTICAS FINALES
         // ---------------------------------------------------------
         System.out.println("\n=========================================");
         System.out.println("   ESTADÍSTICAS FINALES POST-BATALLA     ");
@@ -149,7 +140,7 @@ public class Problema1_juegoDeRoles {
         ana.mostrarPersonajes();
 
         // ---------------------------------------------------------
-        // 5. GUARDAR DATOS 
+        // 5. GUARDAR DATOS
         // ---------------------------------------------------------
         System.out.println("\nGuardando resultados en usuarios.dat...");
         Problema1_EscrituraArchivoSecuencial escritura = new Problema1_EscrituraArchivoSecuencial("usuarios.dat");
