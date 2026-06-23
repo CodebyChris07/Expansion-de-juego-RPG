@@ -31,24 +31,39 @@ public class Problema1_Combate {
         }
 
         System.out.println("\n¡Comienza el combate entre " + j1.getNombre() + " y " + j2.getNombre() + "!");
-
         while (j1.estaVivo() && j2.estaVivo()) {
-            int danio1 = Math.max(0, j1.ataque() - j2.defensa());
-            j2.recibirDanio(danio1);
-            System.out.println(j1.getNombre() + " ataca a " + j2.getNombre() + " con " + danio1 + " de daño.");
 
+            // --- TURNO JUGADOR 1 ---
+            // Reseteamos el  ataque y aplicamos efectos (veneno, congelado, etc)
+            j1.setPuedeAtacar(true);
+            j1.evaluarEstados();
+
+            // Solo atacamos si sigue vivo y no está congelado
+            if (j1.estaVivo() && j1.isPuedeAtacar()) {
+                int danio1 = Math.max(0, j1.ataque() - j2.defensa());
+                j2.recibirDanio(danio1);
+                System.out.println(j1.getNombre() + " ataca a " + j2.getNombre() + " con " + danio1 + " de daño.");
+            } else if (!j1.isPuedeAtacar()) {
+                System.out.println(j1.getNombre() + " está impedido para atacar.");
+            }
+
+            
             if (!j2.estaVivo()) {
                 break;
             }
 
-            int danio2 = Math.max(0, j2.ataque() - j1.defensa());
-            j1.recibirDanio(danio2);
-            System.out.println(j2.getNombre() + " ataca a " + j1.getNombre() + " con " + danio2 + " de daño.");
-        }
+            // --- TURNO JUGADOR 2 ---
+            j2.setPuedeAtacar(true);
+            j2.evaluarEstados();
 
-        Problema1_Jugadores ganador = j1.estaVivo() ? j1 : j2;
-        System.out.println("¡" + ganador.getNombre() + " gana el combate!");
-        ganador.subirNivel();
+            if (j2.estaVivo() && j2.isPuedeAtacar()) {
+                int danio2 = Math.max(0, j2.ataque() - j1.defensa());
+                j1.recibirDanio(danio2);
+                System.out.println(j2.getNombre() + " ataca a " + j1.getNombre() + " con " + danio2 + " de daño.");
+            } else if (!j2.isPuedeAtacar()) {
+                System.out.println(j2.getNombre() + " está impedido para atacar.");
+            }
+        }
     }
 
     public static void batallaAleatoria(Problema1_Usuario u1, Problema1_Usuario u2) {
