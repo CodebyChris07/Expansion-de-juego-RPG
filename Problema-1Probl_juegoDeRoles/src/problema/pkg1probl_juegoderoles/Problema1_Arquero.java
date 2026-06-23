@@ -48,10 +48,45 @@ public class Problema1_Arquero extends Problema1_Jugadores{
     }
 
     @Override
+    public int costoEnergiaHabilidad() {
+        return 35;
+    }
+
+    @Override
+    public int duracionCooldownHabilidad() {
+        return 3;
+    }
+
+    /**
+     * Habilidad especial del Arquero: "Lluvia de Flechas".
+     * Dispara una ráfaga de 3 flechas; cada flecha disponible suma daño
+     * extra. Si no quedan flechas, el efecto se reduce considerablemente.
+     */
+    @Override
+    protected int efectoHabilidadEspecial() {
+        int flechasDisparadas = Math.min(flechas, 3);
+        flechas -= flechasDisparadas;
+
+        int danioPorFlecha = nivelAtaque + punteria;
+        int danioTotal = danioPorFlecha * Math.max(flechasDisparadas, 1);
+
+        if (flechasDisparadas == 0) {
+            System.out.println(nombre + " no tiene flechas para la lluvia y ataca con golpes débiles.");
+            danioTotal = nivelAtaque + (fuerza / 2);
+        } else {
+            System.out.println(nombre + " dispara una ¡LLUVIA DE FLECHAS! ("
+                    + flechasDisparadas + " flechas, " + danioTotal + " de daño total)");
+        }
+        return danioTotal;
+    }
+
+    @Override
     public String toString() {
         return "Arquero [" + nombre + "] | Nivel: " + nivelExperiencia 
          + " | Vida: " + vida + " | Flechas: " + flechas 
-         + " | Puntería: " + punteria;
+         + " | Puntería: " + punteria
+         + " | Energía: " + energia + "/" + energiaMaxima
+         + " | Cooldown: " + cooldownHabilidad;
     }
     
 }

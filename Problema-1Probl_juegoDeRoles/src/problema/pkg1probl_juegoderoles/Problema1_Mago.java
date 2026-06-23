@@ -75,6 +75,50 @@ public class Problema1_Mago extends Problema1_Jugadores {
     }
 
     @Override
+    public int costoEnergiaHabilidad() {
+        return 40;
+    }
+
+    @Override
+    public int duracionCooldownHabilidad() {
+        return 4;
+    }
+
+    /**
+     * Habilidad especial del Mago: "Ráfaga Elemental".
+     * Inflige daño mágico potenciado según su afinidad y consume maná
+     * además de energía.
+     */
+    @Override
+    protected int efectoHabilidadEspecial() {
+        int danioBase = (nivelAtaque + fuerza) * 2;
+        int bonusElemental;
+        if (afinidad.equalsIgnoreCase("Fuego")) {
+            bonusElemental = 25;
+        } else if (afinidad.equalsIgnoreCase("Agua")) {
+            bonusElemental = 10;
+        } else if (afinidad.equalsIgnoreCase("Tierra")) {
+            bonusElemental = 15;
+        } else if (afinidad.equalsIgnoreCase("Aire")) {
+            bonusElemental = 20;
+        } else {
+            bonusElemental = 5;
+        }
+
+        int costoMana = 20;
+        if (mana >= costoMana) {
+            mana -= costoMana;
+        } else {
+            bonusElemental /= 2; // sin suficiente maná, el efecto se debilita
+        }
+
+        int danioTotal = danioBase + bonusElemental;
+        System.out.println(nombre + " invoca una ¡RÁFAGA DE " + afinidad.toUpperCase()
+                + "! (" + danioTotal + " de daño mágico)");
+        return danioTotal;
+    }
+
+    @Override
     public String toString() {
         return "[Mago de " + afinidad + "] " + super.toString() + " | Mana: " + mana;
     }

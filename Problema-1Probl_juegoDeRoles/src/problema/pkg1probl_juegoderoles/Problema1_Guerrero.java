@@ -61,9 +61,33 @@ public class Problema1_Guerrero extends Problema1_Jugadores {
     }
 
     @Override
+    public int costoEnergiaHabilidad() {
+        return 30;
+    }
+
+    @Override
+    public int duracionCooldownHabilidad() {
+        return 3;
+    }
+
+    /**
+     * Habilidad especial del Guerrero: "Golpe Devastador".
+     * Inflige un golpe de altísimo daño basado en su fuerza y nivel de
+     * ataque, e ignora el escudo del enemigo (se aplica como daño puro).
+     */
+    @Override
+    protected int efectoHabilidadEspecial() {
+        int danio = (nivelAtaque + fuerza) * 3;
+        System.out.println(nombre + " desata un ¡GOLPE DEVASTADOR! (" + danio + " de daño puro)");
+        return danio;
+    }
+
+    @Override
     public String toString() {
         return "Guerrero [" + nombre + "] | Nivel: " + nivelExperiencia
                 + " | Vida: " + vida + " | Escudo: " + escudo
-                + " | Golpes: " + golpes;
+                + " | Golpes: " + golpes
+                + " | Energía: " + energia + "/" + energiaMaxima
+                + " | Cooldown: " + cooldownHabilidad;
     }
 }
