@@ -5,6 +5,7 @@
 package problema.pkg1probl_juegoderoles;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  *
@@ -21,6 +22,9 @@ public abstract class Problema1_Jugadores implements Serializable {
     protected String id;
     protected String nombre;
     protected int nivelDefensa;
+    // Nuevos atributos
+    protected ArrayList<IEstadoAlterado> estadoAlterado; 
+    protected boolean puedeAtacar;
 
     public Problema1_Jugadores(String armas, int fuerza, int velocidad, String id, String nombre) {
         this.armas = armas;
@@ -32,6 +36,8 @@ public abstract class Problema1_Jugadores implements Serializable {
         this.id = id;
         this.nombre = nombre;
         this.nivelDefensa = 5;
+        this.estadoAlterado = new ArrayList<>(); 
+        this.puedeAtacar = true;
 
     }
 
@@ -137,6 +143,36 @@ public abstract class Problema1_Jugadores implements Serializable {
         nivelExperiencia -= costo;
         return true;
     }
+
+    public ArrayList<IEstadoAlterado> getEstados() {
+        return estadoAlterado;
+    }
+
+    public void recibirEstados(IEstadoAlterado estadoNuevo) {
+        estadoAlterado.add(estadoNuevo);
+        
+    }
+
+    public boolean isPuedeAtacar() {
+        return puedeAtacar;
+    }
+
+    public void setPuedeAtacar(boolean puedeAtacar) {
+        this.puedeAtacar = puedeAtacar;
+    }
+    
+    public void evaluarEstados(){
+    for (int i = estadoAlterado.size() - 1; i >= 0; i--) {       
+        IEstadoAlterado estadoActual = estadoAlterado.get(i);
+        estadoActual.aplicarEfecto(this);
+        // 3. Preguntamos si el estado ya caducó
+        if (estadoActual.haTerminado()) {
+            // Si devuelve true, lo eliminamos 
+            estadoAlterado.remove(i);
+        }
+    
+    }
+    
 
     public abstract int ataque();
 
