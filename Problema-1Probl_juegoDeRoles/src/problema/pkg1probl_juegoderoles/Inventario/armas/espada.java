@@ -8,9 +8,8 @@ public class espada extends armas {
             "Filo V", "Aspecto Ígneo II", "Saqueo III"
     };
 
-    public espada(int durabilidad, ArrayList<String> encantamiento, String nombre, int danio, String tipoDealcance,
-            String material) {
-        super(0, new ArrayList<>(), nombre, danio, tipoDealcance);
+    public espada(String nombre, String material) {
+        super(0, new ArrayList<>(), nombre, 7, "Cuerpo a cuerpo");
         this.material = material;
         switch (material) {
             case "madera":
@@ -51,15 +50,13 @@ public class espada extends armas {
 
     @Override
     public String encantar(String encantamiento) {
-        for (int i = 0; i < ENCANTAMIENTOS_DISPONIBLES.length; i++) { 
-            String e = ENCANTAMIENTOS_DISPONIBLES[i] ;
-            if(e.equals(encantamiento)&&!this.encantamiento.contains(e)){
+        for (int i = 0; i < ENCANTAMIENTOS_DISPONIBLES.length; i++) {
+            String e = ENCANTAMIENTOS_DISPONIBLES[i];
+            if (e.equals(encantamiento) && !this.encantamiento.contains(e)) {
                 this.encantamiento.add(e);
                 return "has aplicado " + e + " a tu espada";
-
             }
         }
         return null;
     }
-
 }
