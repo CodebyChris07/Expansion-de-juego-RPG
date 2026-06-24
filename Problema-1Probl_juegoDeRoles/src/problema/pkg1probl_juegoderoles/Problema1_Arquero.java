@@ -3,6 +3,7 @@ package problema.pkg1probl_juegoderoles;
 import problema.pkg1probl_juegoderoles.Inventario.armas.arco;
 
 public class Problema1_Arquero extends Problema1_Jugadores {
+
     private int flechas;
     private int punteria;
     private arco arco;
@@ -77,9 +78,15 @@ public class Problema1_Arquero extends Problema1_Jugadores {
     }
 
     /**
+
+     * Habilidad especial del Arquero: "Lluvia de Flechas". Dispara una ráfaga
+     * de 3 flechas; cada flecha disponible suma daño extra. Si no quedan
+     * flechas, el efecto se reduce considerablemente.
+
      * Habilidad especial del Arquero: "Lluvia de Flechas".
      * Dispara una ráfaga de 3 flechas; cada flecha disponible suma daño
      * extra. Si no quedan flechas, el efecto se reduce considerablemente.
+
      */
     @Override
     protected int efectoHabilidadEspecial() {
@@ -110,7 +117,13 @@ public class Problema1_Arquero extends Problema1_Jugadores {
 
         return "Arquero [" + nombre + "] | Nivel: " + nivelExperiencia
                 + " | Vida: " + vida + " | Flechas: " + flechas
+
+                + " | Puntería: " + punteria
+                + " | Energía: " + energia + "/" + energiaMaxima
+                + " | Cooldown: " + cooldownHabilidad;
+
                 + " | Puntería: " + punteria;
+
 
     }
 }

@@ -36,7 +36,7 @@ public class Problema1_Combate {
 
             // Solo atacamos si sigue vivo y no está congelado
             if (j1.estaVivo() && j1.isPuedeAtacar()) {
-                int danio1 = Math.max(0, j1.ataque() - j2.defensa());
+                int danio1 = calcularDanioDelTurno(j1, j2, random);
                 j2.recibirDanio(danio1);
                 System.out.println(j1.getNombre() + " ataca a " + j2.getNombre() + " con " + danio1 + " de daño.");
 
@@ -60,9 +60,6 @@ public class Problema1_Combate {
             } else if (!j1.isPuedeAtacar()) {
                 System.out.println(j1.getNombre() + " está impedido para atacar.");
             }
-            int danio1 = Math.max(0, j1.calcularAtaque() - j2.calcularDefensa());
-            j2.recibirDanio(danio1);
-            System.out.println(j1.getNombre() + " ataca a " + j2.getNombre() + " con " + danio1 + " de daño.");
 
             if (!j2.estaVivo()) {
                 break;
@@ -76,7 +73,7 @@ public class Problema1_Combate {
             j2.evaluarEstados();
 
             if (j2.estaVivo() && j2.isPuedeAtacar()) {
-                int danio2 = Math.max(0, j2.ataque() - j1.defensa());
+                int danio2 = calcularDanioDelTurno(j2, j1, random);
                 j1.recibirDanio(danio2);
                 System.out.println(j2.getNombre() + " ataca a " + j1.getNombre() + " con " + danio2 + " de daño.");
 
@@ -92,7 +89,7 @@ public class Problema1_Combate {
                 else if (suerte >= 15 && suerte < 25 && !j1.tieneEstado(Congelado.class)) {
                     j1.recibirEstados(new Congelado(1)); // 1 turno sin atacar
                     System.out.println("¡" + j2.getNombre() + " ha congelado a " + j1.getNombre() + "!");
-                } // 15% de probabilidad de AUMENTAR SU PROPIA FUERZA (j2)
+                } // 15% de probabilidad de AUMENTAR SU PROPIA FUERZA 
                 else if (suerte >= 25 && suerte < 40 && !j2.tieneEstado(AumentarFuerza.class)) {
                     j2.recibirEstados(new AumentarFuerza(3, 10)); // 3 turnos, +10 de fuerza
                 }
@@ -101,19 +98,32 @@ public class Problema1_Combate {
             } else if (!j2.isPuedeAtacar()) {
                 System.out.println(j2.getNombre() + " está impedido para atacar.");
             }
+
+
             int danio2 = Math.max(0, j2.calcularAtaque() - j1.calcularDefensa());
 
             j1.recibirDanio(danio2);
             System.out.println(j2.getNombre() + " ataca a " + j1.getNombre() + " con " + danio2 + " de daño.");
 
+
             // Al finalizar la ronda completa, ambos personajes avanzan su turno
             // (reduce cooldown y regenera energía).
             j1.avanzarTurno();
             j2.avanzarTurno();
-        }
+
 
         }
+        }
     }
+
+
+    }
+
+    /**
+     * Calcula el daño que un atacante infringe a su rival en el turno actual.
+     * Con una probabilidad del 30% el atacante intenta usar su habilidad
+     * especial; si no está disponible (cooldown o energía insuficiente) se
+     * captura la excepción y se recurre al ataque normal.
 
     /**
      * Calcula el daño que un atacante infringe a su rival en el turno
@@ -127,13 +137,21 @@ public class Problema1_Combate {
         if (intentaHabilidad) {
             try {
                 int danioHabilidad = atacante.usarHabilidadEspecial();
+
+                return Math.max(0, danioHabilidad - defensor.calcularDefensa());
+
                 return Math.max(0, danioHabilidad - defensor.defensa());
+
             } catch (Problema1_SinEnergiaException ex) {
                 System.out.println(ex.getMessage() + " Realiza un ataque normal en su lugar.");
             }
         }
 
+
+        return Math.max(0, atacante.calcularAtaque() - defensor.calcularDefensa());
+
         return Math.max(0, atacante.ataque() - defensor.defensa());
+
     }
 
     public static void batallaAleatoria(Problema1_Usuario u1, Problema1_Usuario u2) {

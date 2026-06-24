@@ -6,7 +6,6 @@ import problema.pkg1probl_juegoderoles.Inventario.objetos;
 import problema.pkg1probl_juegoderoles.Inventario.armas.armas;
 import problema.pkg1probl_juegoderoles.Inventario.armadura.armadura;
 
-
 public abstract class Problema1_Jugadores implements Serializable {
 
     protected int vida;
@@ -18,7 +17,6 @@ public abstract class Problema1_Jugadores implements Serializable {
     protected String nombre;
     protected int nivelDefensa;
 
-
     // --- Sistema de Energía y Cooldown ---
     protected int energia;
     protected int energiaMaxima;
@@ -26,8 +24,11 @@ public abstract class Problema1_Jugadores implements Serializable {
     protected static final int COOLDOWN_BASE = 3; // turnos de espera tras usar la habilidad
     protected static final int COSTO_ENERGIA_BASE = 25; // costo por defecto de la habilidad especial
 
+
+
     public Problema1_Jugadores(String armas, int fuerza, int velocidad, String id, String nombre) {
         this.armas = armas;
+
 
     // Nuevos atributos
     protected ArrayList<IEstadoAlterado> estadoAlterado;
@@ -36,7 +37,6 @@ public abstract class Problema1_Jugadores implements Serializable {
     protected ArrayList<objetos> inventario;
     protected armas armaEquipada;
     protected armadura armaduraEquipada;
-
 
     public Problema1_Jugadores(int fuerza, int velocidad, String id, String nombre) {
 
@@ -48,8 +48,6 @@ public abstract class Problema1_Jugadores implements Serializable {
         this.id = id;
         this.nombre = nombre;
         this.nivelDefensa = 5;
-
-
         this.energiaMaxima = 100;
         this.energia = energiaMaxima;
         this.cooldownHabilidad = 0;
@@ -97,14 +95,16 @@ public abstract class Problema1_Jugadores implements Serializable {
 
     public void recibirDanio(int danio) {
         this.vida -= danio;
-        if (this.vida < 0)
+        if (this.vida < 0) {
             this.vida = 0;
+        }
     }
 
     public boolean mejorarAtaque() {
         int costo = nivelAtaque;
-        if (nivelExperiencia < costo)
+        if (nivelExperiencia < costo) {
             return false;
+        }
         nivelAtaque++;
         nivelExperiencia -= costo;
         return true;
@@ -112,8 +112,9 @@ public abstract class Problema1_Jugadores implements Serializable {
 
     public boolean mejorarDefensa() {
         int costo = nivelDefensa;
-        if (nivelExperiencia < costo)
+        if (nivelExperiencia < costo) {
             return false;
+        }
         nivelDefensa++;
         nivelExperiencia -= costo;
         return true;
@@ -184,6 +185,13 @@ public abstract class Problema1_Jugadores implements Serializable {
         this.nivelDefensa = nivelDefensa;
     }
 
+    public int getEnergia() {
+        return energia;
+    }
+
+
+    public int getEnergiaMaxima() {
+        return energiaMaxima;
 
     public int getEnergia() {
         return energia;
@@ -227,33 +235,38 @@ public abstract class Problema1_Jugadores implements Serializable {
 
     public boolean estaVivo() {
         return this.vida > 0;
+
     }
 
-    public void recibirDanio(int danio) {
-        this.vida -= danio;
-        if (this.vida < 0) {
-            this.vida = 0;
-        }
+    public void setEnergiaMaxima(int energiaMaxima) {
+        this.energiaMaxima = energiaMaxima;
     }
 
-    public boolean mejorarAtaque() {
-        int costo = nivelAtaque;
-        if (nivelExperiencia < costo) {
-            return false;
-        }
-        nivelAtaque++;
-        nivelExperiencia -= costo;
-        return true;
+    public int getCooldownHabilidad() {
+        return cooldownHabilidad;
     }
 
-    public boolean mejorarDefensa() {
-        int costo = nivelDefensa;
-        if (nivelExperiencia < costo) {
-            return false;
+    public boolean habilidadDisponible() {
+        return cooldownHabilidad == 0;
+    }
+
+    /**
+     * Recupera energía (por ejemplo, al final de cada turno) sin pasar el
+     * máximo permitido.
+     */
+    public void recuperarEnergia(int cantidad) {
+        this.energia = Math.min(energiaMaxima, this.energia + cantidad);
+    }
+
+    /**
+     * Reduce en 1 el cooldown de la habilidad especial, sin bajar de 0. Debe
+     * llamarse una vez por cada turno transcurrido.
+     */
+    public void avanzarTurno() {
+        if (cooldownHabilidad > 0) {
+            cooldownHabilidad--;
         }
-        nivelDefensa++;
-        nivelExperiencia -= costo;
-        return true;
+        recuperarEnergia(5); // regeneración pasiva de energía por turno
     }
 
     public ArrayList<IEstadoAlterado> getEstados() {
@@ -262,7 +275,6 @@ public abstract class Problema1_Jugadores implements Serializable {
 
     public void recibirEstados(IEstadoAlterado estadoNuevo) {
         estadoAlterado.add(estadoNuevo);
-
     }
 
     public boolean isPuedeAtacar() {
@@ -282,30 +294,72 @@ public abstract class Problema1_Jugadores implements Serializable {
                 // Si devuelve true, lo eliminamos 
                 estadoAlterado.remove(i);
             }
-
         }
-
     }
 
-    public boolean tieneEstado(Class<?> claseEstado) { 
+    public boolean tieneEstado(Class<?> claseEstado) {
         //Class<?> es un tipo de dato que representa metainformación sobre 
         //cualquier clase o interfaz en tiempo de ejecución
         for (IEstadoAlterado estado : estadoAlterado) {
             if (claseEstado.isInstance(estado)) {
                 return true;
-
             }
-
         }
         return false;
-
     }
 
-    public abstract int ataque();
+    /**
+     * Define el costo en energía que consume la habilidad especial de este
+     * personaje. Cada subclase puede sobreescribirlo; por defecto usa el costo
+     * base.
+     */
+    public int costoEnergiaHabilidad() {
+        return COSTO_ENERGIA_BASE;
+    }
 
-    public abstract int defensa();
+    /**
+     * Define cuántos turnos de cooldown deja la habilidad especial tras usarse.
+     * Cada subclase puede sobreescribirlo; por defecto usa el cooldown base.
+     */
+    public int duracionCooldownHabilidad() {
+        return COOLDOWN_BASE;
+    }
 
-    public abstract void subirNivel();
+    /**
+     * Efecto particular de la habilidad especial de cada tipo de personaje
+     * (Guerrero, Mago, Arquero, etc). Debe devolver el daño (o valor relevante)
+     * producido por la habilidad.
+     */
+    protected abstract int efectoHabilidadEspecial();
+
+    /**
+     * Intenta usar la habilidad especial del personaje. Valida que el personaje
+     * tenga suficiente energía y que la habilidad no esté en cooldown. Si ambas
+     * condiciones se cumplen, consume la energía, activa el cooldown y ejecuta
+     * el efecto particular de la subclase.
+     *
+     * @return el resultado numérico del efecto de la habilidad (p. ej. daño)
+     * @throws Problema1_SinEnergiaException si no hay energía suficiente o la
+     * habilidad todavía está en cooldown.
+     */
+    public int usarHabilidadEspecial() throws Problema1_SinEnergiaException {
+        if (!habilidadDisponible()) {
+            throw new Problema1_SinEnergiaException(
+                    nombre + " no puede usar su habilidad especial: "
+                    + "está en cooldown (" + cooldownHabilidad + " turno(s) restante(s)).");
+        }
+
+        int costo = costoEnergiaHabilidad();
+        if (energia < costo) {
+            throw new Problema1_SinEnergiaException(
+                    nombre + " no tiene suficiente energía para usar su habilidad especial "
+                    + "(necesita " + costo + ", tiene " + energia + ").");
+        }
+
+        energia -= costo;
+        cooldownHabilidad = duracionCooldownHabilidad();
+        return efectoHabilidadEspecial();
+    }
 
     /**
      * Define el costo en energía que consume la habilidad especial de
@@ -365,11 +419,18 @@ public abstract class Problema1_Jugadores implements Serializable {
     public String toString() {
 
         return String.format("ID: %s | Nombre: %s | Vida: %d | Nivel: %d | Arma: %s | Energía: %d/%d | Cooldown: %d",
+                id, nombre, vida, nivelExperiencia,
+                armaEquipada != null ? armaEquipada.getNombre() : "ninguna",
+                energia, energiaMaxima, cooldownHabilidad);
+
+
+        return String.format("ID: %s | Nombre: %s | Vida: %d | Nivel: %d | Arma: %s | Energía: %d/%d | Cooldown: %d",
                 id, nombre, vida, nivelExperiencia, armas, energia, energiaMaxima, cooldownHabilidad);
 
         return String.format("ID: %s | Nombre: %s | Vida: %d | Nivel: %d | Arma: %s",
                 id, nombre, vida, nivelExperiencia,
                 armaEquipada != null ? armaEquipada.getNombre() : "ninguna");
+
 
     }
 }
