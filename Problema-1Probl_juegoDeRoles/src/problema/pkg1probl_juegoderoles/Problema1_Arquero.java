@@ -1,33 +1,48 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package problema.pkg1probl_juegoderoles;
 
-/**
- *
- * @author ASUS
- */
-public class Problema1_Arquero extends Problema1_Jugadores{
+import problema.pkg1probl_juegoderoles.Inventario.armas.arco;
+
+public class Problema1_Arquero extends Problema1_Jugadores {
     private int flechas;
     private int punteria;
+    private arco arco;
 
-    public Problema1_Arquero(int flechas, int punteria, String armas, int fuerza, int velocidad, String id, String nombre) {
-        super(armas, fuerza, velocidad, id, nombre);
+    public Problema1_Arquero(int flechas, int punteria, int fuerza, int velocidad, String id, String nombre,
+            arco arco) {
+        super(fuerza, velocidad, id, nombre);
         this.flechas = flechas;
+        this.punteria = punteria;
+        this.arco = arco;
+        agregarObjeto(arco);
+        equiparArma(arco);
+    }
+
+    public int getFlechas() {
+        return flechas;
+    }
+
+    public void setFlechas(int flechas) {
+        this.flechas = flechas;
+    }
+
+    public int getPunteria() {
+        return punteria;
+    }
+
+    public void setPunteria(int punteria) {
         this.punteria = punteria;
     }
 
-    public int getFlechas() { return flechas; }
-    public void setFlechas(int flechas) { this.flechas = flechas; }
-    public int getPunteria() { return punteria; }
-    public void setPunteria(int punteria) { this.punteria = punteria; }
-
     @Override
-    public int ataque() {
+    public int calcularAtaque() {
         if (flechas > 0) {
             flechas--;
-            return nivelAtaque + fuerza + punteria;
+            int danioArma = 0;
+            if (armaEquipada != null) {
+                danioArma = armaEquipada.getDanio();
+                armaEquipada.Desgaste();
+            }
+            return nivelAtaque + fuerza + punteria + danioArma;
         } else {
             System.out.println(nombre + " se quedó sin flechas.");
             return nivelAtaque + (fuerza / 2);
@@ -35,8 +50,12 @@ public class Problema1_Arquero extends Problema1_Jugadores{
     }
 
     @Override
-    public int defensa() {
-        return nivelDefensa + (velocidad / 2);
+    public int calcularDefensa() {
+        int defensaArmadura = 0;
+        if (armaduraEquipada != null) {
+            defensaArmadura = armaduraEquipada.getDefensa();
+        }
+        return nivelDefensa + (velocidad / 2) + defensaArmadura;
     }
 
     @Override
@@ -82,11 +101,16 @@ public class Problema1_Arquero extends Problema1_Jugadores{
 
     @Override
     public String toString() {
+
         return "Arquero [" + nombre + "] | Nivel: " + nivelExperiencia 
          + " | Vida: " + vida + " | Flechas: " + flechas 
          + " | Puntería: " + punteria
          + " | Energía: " + energia + "/" + energiaMaxima
          + " | Cooldown: " + cooldownHabilidad;
+
+        return "Arquero [" + nombre + "] | Nivel: " + nivelExperiencia
+                + " | Vida: " + vida + " | Flechas: " + flechas
+                + " | Puntería: " + punteria;
+
     }
-    
 }

@@ -1,22 +1,21 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package problema.pkg1probl_juegoderoles;
 
-/**
- *
- * @author ASUS
- */
+import problema.pkg1probl_juegoderoles.Inventario.armas.baston;
+
 public class Problema1_Mago extends Problema1_Jugadores {
 
     private int mana;
     private String afinidad;
+    private baston baston;
 
-    public Problema1_Mago(int mana, String afinidad, String armas, int fuerza, int velocidad, String id, String nombre) {
-        super(armas, fuerza, velocidad, id, nombre);
+    public Problema1_Mago(int mana, String afinidad, int fuerza, int velocidad, String id, String nombre,
+            baston baston) {
+        super(fuerza, velocidad, id, nombre);
         this.mana = mana;
         this.afinidad = afinidad;
+        this.baston = baston;
+        agregarObjeto(baston);
+        equiparArma(baston);
     }
 
     public int getMana() {
@@ -36,8 +35,13 @@ public class Problema1_Mago extends Problema1_Jugadores {
     }
 
     @Override
-    public int ataque() {
-        int danioBase = nivelAtaque + (fuerza / 2);
+    public int calcularAtaque() {
+        int danioArma = 0;
+        if (armaEquipada != null) {
+            danioArma = armaEquipada.getDanio();
+            armaEquipada.Desgaste();
+        }
+        int danioBase = nivelAtaque + (fuerza / 2) + danioArma;
         if (afinidad.equalsIgnoreCase("Fuego")) {
             return danioBase += 15;
         } else if (afinidad.equalsIgnoreCase("Agua")) {
@@ -52,8 +56,12 @@ public class Problema1_Mago extends Problema1_Jugadores {
     }
 
     @Override
-    public int defensa() {
-        int defensaBase = nivelDefensa + (velocidad / 3);
+    public int calcularDefensa() {
+        int defensaArmadura = 0;
+        if (armaduraEquipada != null) {
+            defensaArmadura = armaduraEquipada.getDefensa();
+        }
+        int defensaBase = nivelDefensa + (velocidad / 3) + defensaArmadura;
         if (afinidad.equalsIgnoreCase("Fuego")) {
             return defensaBase += 2;
         } else if (afinidad.equalsIgnoreCase("Agua")) {
@@ -122,5 +130,4 @@ public class Problema1_Mago extends Problema1_Jugadores {
     public String toString() {
         return "[Mago de " + afinidad + "] " + super.toString() + " | Mana: " + mana;
     }
-
 }

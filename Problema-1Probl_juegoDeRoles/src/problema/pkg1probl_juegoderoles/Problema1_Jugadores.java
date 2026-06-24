@@ -1,18 +1,14 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package problema.pkg1probl_juegoderoles;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import problema.pkg1probl_juegoderoles.Inventario.objetos;
+import problema.pkg1probl_juegoderoles.Inventario.armas.armas;
+import problema.pkg1probl_juegoderoles.Inventario.armadura.armadura;
 
-/**
- *
- * @author ASUS
- */
+
 public abstract class Problema1_Jugadores implements Serializable {
 
-    protected String armas;
     protected int vida;
     protected int nivelExperiencia;
     protected int fuerza;
@@ -21,6 +17,7 @@ public abstract class Problema1_Jugadores implements Serializable {
     protected String id;
     protected String nombre;
     protected int nivelDefensa;
+
 
     // --- Sistema de Energía y Cooldown ---
     protected int energia;
@@ -31,6 +28,18 @@ public abstract class Problema1_Jugadores implements Serializable {
 
     public Problema1_Jugadores(String armas, int fuerza, int velocidad, String id, String nombre) {
         this.armas = armas;
+
+    // Nuevos atributos
+    protected ArrayList<IEstadoAlterado> estadoAlterado;
+    protected boolean puedeAtacar;
+
+    protected ArrayList<objetos> inventario;
+    protected armas armaEquipada;
+    protected armadura armaduraEquipada;
+
+
+    public Problema1_Jugadores(int fuerza, int velocidad, String id, String nombre) {
+
         this.vida = 100;
         this.nivelExperiencia = 0;
         this.fuerza = fuerza;
@@ -40,19 +49,77 @@ public abstract class Problema1_Jugadores implements Serializable {
         this.nombre = nombre;
         this.nivelDefensa = 5;
 
+
         this.energiaMaxima = 100;
         this.energia = energiaMaxima;
         this.cooldownHabilidad = 0;
+
+        this.estadoAlterado = new ArrayList<>();
+        this.puedeAtacar = true;
+        this.inventario = new ArrayList<>();
+        this.armaEquipada = null;
+        this.armaduraEquipada = null;
     }
 
-    public String getArmas() {
-        return armas;
+    public void agregarObjeto(objetos obj) {
+        inventario.add(obj);
+        System.out.println(obj.getNombre() + " añadido al inventario.");
     }
 
-    public void setArmas(String armas) {
-        this.armas = armas;
+    public void equiparArma(armas arma) {
+        if (inventario.contains(arma)) {
+            this.armaEquipada = arma;
+            System.out.println(nombre + " equipó " + arma.getNombre());
+        } else {
+            System.out.println("El arma no está en el inventario.");
+        }
     }
 
+    public void equiparArmadura(armadura arm) {
+        if (inventario.contains(arm)) {
+            this.armaduraEquipada = arm;
+            System.out.println(nombre + " equipó " + arm.getNombre());
+        } else {
+            System.out.println("La armadura no está en el inventario.");
+        }
+    }
+
+    public abstract int calcularAtaque();
+
+    public abstract int calcularDefensa();
+
+    public abstract void subirNivel();
+
+    public boolean estaVivo() {
+        return this.vida > 0;
+
+    }
+
+    public void recibirDanio(int danio) {
+        this.vida -= danio;
+        if (this.vida < 0)
+            this.vida = 0;
+    }
+
+    public boolean mejorarAtaque() {
+        int costo = nivelAtaque;
+        if (nivelExperiencia < costo)
+            return false;
+        nivelAtaque++;
+        nivelExperiencia -= costo;
+        return true;
+    }
+
+    public boolean mejorarDefensa() {
+        int costo = nivelDefensa;
+        if (nivelExperiencia < costo)
+            return false;
+        nivelDefensa++;
+        nivelExperiencia -= costo;
+        return true;
+    }
+
+    // getters y setters
     public int getVida() {
         return vida;
     }
@@ -65,8 +132,8 @@ public abstract class Problema1_Jugadores implements Serializable {
         return nivelExperiencia;
     }
 
-    public void setNivelExperiencia(int nivelExperiencia) {
-        this.nivelExperiencia = nivelExperiencia;
+    public void setNivelExperiencia(int n) {
+        this.nivelExperiencia = n;
     }
 
     public int getFuerza() {
@@ -117,6 +184,7 @@ public abstract class Problema1_Jugadores implements Serializable {
         this.nivelDefensa = nivelDefensa;
     }
 
+
     public int getEnergia() {
         return energia;
     }
@@ -156,6 +224,7 @@ public abstract class Problema1_Jugadores implements Serializable {
         recuperarEnergia(5); // regeneración pasiva de energía por turno
     }
 
+
     public boolean estaVivo() {
         return this.vida > 0;
     }
@@ -185,6 +254,51 @@ public abstract class Problema1_Jugadores implements Serializable {
         nivelDefensa++;
         nivelExperiencia -= costo;
         return true;
+    }
+
+    public ArrayList<IEstadoAlterado> getEstados() {
+        return estadoAlterado;
+    }
+
+    public void recibirEstados(IEstadoAlterado estadoNuevo) {
+        estadoAlterado.add(estadoNuevo);
+
+    }
+
+    public boolean isPuedeAtacar() {
+        return puedeAtacar;
+    }
+
+    public void setPuedeAtacar(boolean puedeAtacar) {
+        this.puedeAtacar = puedeAtacar;
+    }
+
+    public void evaluarEstados() {
+        for (int i = estadoAlterado.size() - 1; i >= 0; i--) {
+            IEstadoAlterado estadoActual = estadoAlterado.get(i);
+            estadoActual.aplicarEfecto(this);
+            // 3. Preguntamos si el estado ya caducó
+            if (estadoActual.haTerminado()) {
+                // Si devuelve true, lo eliminamos 
+                estadoAlterado.remove(i);
+            }
+
+        }
+
+    }
+
+    public boolean tieneEstado(Class<?> claseEstado) { 
+        //Class<?> es un tipo de dato que representa metainformación sobre 
+        //cualquier clase o interfaz en tiempo de ejecución
+        for (IEstadoAlterado estado : estadoAlterado) {
+            if (claseEstado.isInstance(estado)) {
+                return true;
+
+            }
+
+        }
+        return false;
+
     }
 
     public abstract int ataque();
@@ -249,8 +363,13 @@ public abstract class Problema1_Jugadores implements Serializable {
 
     @Override
     public String toString() {
+
         return String.format("ID: %s | Nombre: %s | Vida: %d | Nivel: %d | Arma: %s | Energía: %d/%d | Cooldown: %d",
                 id, nombre, vida, nivelExperiencia, armas, energia, energiaMaxima, cooldownHabilidad);
-    }
 
+        return String.format("ID: %s | Nombre: %s | Vida: %d | Nivel: %d | Arma: %s",
+                id, nombre, vida, nivelExperiencia,
+                armaEquipada != null ? armaEquipada.getNombre() : "ninguna");
+
+    }
 }

@@ -1,22 +1,20 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package problema.pkg1probl_juegoderoles;
 
-/**
- *
- * @author ASUS
- */
+import problema.pkg1probl_juegoderoles.Inventario.armas.espada;
+
 public class Problema1_Guerrero extends Problema1_Jugadores {
 
     private int golpes;
     private int escudo;
+    private espada espada;
 
-    public Problema1_Guerrero(String armas, int fuerza, int velocidad, String id, String nombre) {
-        super(armas, fuerza, velocidad, id, nombre);
+    public Problema1_Guerrero(int fuerza, int velocidad, String id, String nombre, espada espada) {
+        super(fuerza, velocidad, id, nombre);
         this.golpes = 0;
         this.escudo = 10;
+        this.espada = espada;
+        agregarObjeto(espada);
+        equiparArma(espada);
     }
 
     public int getGolpes() {
@@ -36,9 +34,14 @@ public class Problema1_Guerrero extends Problema1_Jugadores {
     }
 
     @Override
-    public int ataque() {
+    public int calcularAtaque() {
         golpes++;
-        int danioBase = nivelAtaque + fuerza;
+        int danioArma = 0;
+        if (armaEquipada != null) {
+            danioArma = armaEquipada.getDanio();
+            armaEquipada.Desgaste();
+        }
+        int danioBase = nivelAtaque + fuerza + danioArma;
         if (critico()) {
             golpes = 0;
             danioBase = danioBase * 2;
@@ -50,8 +53,12 @@ public class Problema1_Guerrero extends Problema1_Jugadores {
     }
 
     @Override
-    public int defensa() {
-        return nivelDefensa + escudo + (velocidad / 3);
+    public int calcularDefensa() {
+        int defensaArmadura = 0;
+        if (armaduraEquipada != null) {
+            defensaArmadura = armaduraEquipada.getDefensa();
+        }
+        return nivelDefensa + escudo + (velocidad / 3) + defensaArmadura;
     }
 
     @Override
