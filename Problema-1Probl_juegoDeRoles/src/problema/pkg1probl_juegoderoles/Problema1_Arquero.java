@@ -78,9 +78,15 @@ public class Problema1_Arquero extends Problema1_Jugadores {
     }
 
     /**
+
      * Habilidad especial del Arquero: "Lluvia de Flechas". Dispara una ráfaga
      * de 3 flechas; cada flecha disponible suma daño extra. Si no quedan
      * flechas, el efecto se reduce considerablemente.
+
+     * Habilidad especial del Arquero: "Lluvia de Flechas".
+     * Dispara una ráfaga de 3 flechas; cada flecha disponible suma daño
+     * extra. Si no quedan flechas, el efecto se reduce considerablemente.
+
      */
     @Override
     protected int efectoHabilidadEspecial() {
@@ -102,10 +108,22 @@ public class Problema1_Arquero extends Problema1_Jugadores {
 
     @Override
     public String toString() {
+
+        return "Arquero [" + nombre + "] | Nivel: " + nivelExperiencia 
+         + " | Vida: " + vida + " | Flechas: " + flechas 
+         + " | Puntería: " + punteria
+         + " | Energía: " + energia + "/" + energiaMaxima
+         + " | Cooldown: " + cooldownHabilidad;
+
         return "Arquero [" + nombre + "] | Nivel: " + nivelExperiencia
                 + " | Vida: " + vida + " | Flechas: " + flechas
+
                 + " | Puntería: " + punteria
                 + " | Energía: " + energia + "/" + energiaMaxima
                 + " | Cooldown: " + cooldownHabilidad;
+
+                + " | Puntería: " + punteria;
+
+
     }
 }
