@@ -1,16 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package problema.pkg1probl_juegoderoles;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-/**
- *
- * @author ASUS
- */
 public class Problema1_Combate {
 
     public static boolean puedenCombatir(Problema1_Jugadores j1, Problema1_Jugadores j2) {
@@ -64,11 +56,13 @@ public class Problema1_Combate {
             } else if (!j1.isPuedeAtacar()) {
                 System.out.println(j1.getNombre() + " está impedido para atacar.");
             }
+            int danio1 = Math.max(0, j1.calcularAtaque() - j2.calcularDefensa());
+            j2.recibirDanio(danio1);
+            System.out.println(j1.getNombre() + " ataca a " + j2.getNombre() + " con " + danio1 + " de daño.");
 
             if (!j2.estaVivo()) {
                 break;
             }
-
             // --- TURNO JUGADOR 2 ---
             j2.setPuedeAtacar(true);
             j2.evaluarEstados();
@@ -99,6 +93,10 @@ public class Problema1_Combate {
             } else if (!j2.isPuedeAtacar()) {
                 System.out.println(j2.getNombre() + " está impedido para atacar.");
             }
+            int danio2 = Math.max(0, j2.calcularAtaque() - j1.calcularDefensa());
+            j1.recibirDanio(danio2);
+            System.out.println(j2.getNombre() + " ataca a " + j1.getNombre() + " con " + danio2 + " de daño.");
+        }
 
         }
     }
@@ -168,5 +166,4 @@ public class Problema1_Combate {
         }
         return contador;
     }
-
 }
