@@ -6,6 +6,7 @@ import problema.pkg1probl_juegoderoles.Inventario.objetos;
 import problema.pkg1probl_juegoderoles.Inventario.armas.armas;
 import problema.pkg1probl_juegoderoles.Inventario.armadura.armadura;
 
+
 public abstract class Problema1_Jugadores implements Serializable {
 
     protected int vida;
@@ -16,9 +17,15 @@ public abstract class Problema1_Jugadores implements Serializable {
     protected String id;
     protected String nombre;
     protected int nivelDefensa;
+
+    // Nuevos atributos
+    protected ArrayList<IEstadoAlterado> estadoAlterado;
+    protected boolean puedeAtacar;
+
     protected ArrayList<objetos> inventario;
     protected armas armaEquipada;
     protected armadura armaduraEquipada;
+
 
     public Problema1_Jugadores(int fuerza, int velocidad, String id, String nombre) {
         this.vida = 100;
@@ -29,6 +36,9 @@ public abstract class Problema1_Jugadores implements Serializable {
         this.id = id;
         this.nombre = nombre;
         this.nivelDefensa = 5;
+
+        this.estadoAlterado = new ArrayList<>();
+        this.puedeAtacar = true;
         this.inventario = new ArrayList<>();
         this.armaEquipada = null;
         this.armaduraEquipada = null;
@@ -155,6 +165,89 @@ public abstract class Problema1_Jugadores implements Serializable {
     public void setNivelDefensa(int nivelDefensa) {
         this.nivelDefensa = nivelDefensa;
     }
+
+
+    public boolean estaVivo() {
+        return this.vida > 0;
+    }
+
+    public void recibirDanio(int danio) {
+        this.vida -= danio;
+        if (this.vida < 0) {
+            this.vida = 0;
+        }
+    }
+
+    public boolean mejorarAtaque() {
+        int costo = nivelAtaque;
+        if (nivelExperiencia < costo) {
+            return false;
+        }
+        nivelAtaque++;
+        nivelExperiencia -= costo;
+        return true;
+    }
+
+    public boolean mejorarDefensa() {
+        int costo = nivelDefensa;
+        if (nivelExperiencia < costo) {
+            return false;
+        }
+        nivelDefensa++;
+        nivelExperiencia -= costo;
+        return true;
+    }
+
+    public ArrayList<IEstadoAlterado> getEstados() {
+        return estadoAlterado;
+    }
+
+    public void recibirEstados(IEstadoAlterado estadoNuevo) {
+        estadoAlterado.add(estadoNuevo);
+
+    }
+
+    public boolean isPuedeAtacar() {
+        return puedeAtacar;
+    }
+
+    public void setPuedeAtacar(boolean puedeAtacar) {
+        this.puedeAtacar = puedeAtacar;
+    }
+
+    public void evaluarEstados() {
+        for (int i = estadoAlterado.size() - 1; i >= 0; i--) {
+            IEstadoAlterado estadoActual = estadoAlterado.get(i);
+            estadoActual.aplicarEfecto(this);
+            // 3. Preguntamos si el estado ya caducó
+            if (estadoActual.haTerminado()) {
+                // Si devuelve true, lo eliminamos 
+                estadoAlterado.remove(i);
+            }
+
+        }
+
+    }
+
+    public boolean tieneEstado(Class<?> claseEstado) { 
+        //Class<?> es un tipo de dato que representa metainformación sobre 
+        //cualquier clase o interfaz en tiempo de ejecución
+        for (IEstadoAlterado estado : estadoAlterado) {
+            if (claseEstado.isInstance(estado)) {
+                return true;
+
+            }
+
+        }
+        return false;
+
+    }
+
+    public abstract int ataque();
+
+    public abstract int defensa();
+
+    public abstract void subirNivel();
 
     @Override
     public String toString() {

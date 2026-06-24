@@ -23,8 +23,39 @@ public class Problema1_Combate {
         }
 
         System.out.println("\n¡Comienza el combate entre " + j1.getNombre() + " y " + j2.getNombre() + "!");
-
         while (j1.estaVivo() && j2.estaVivo()) {
+
+            // --- TURNO JUGADOR 1 ---
+            // Reseteamos el  ataque y aplicamos efectos (veneno, congelado, etc)
+            j1.setPuedeAtacar(true);
+            j1.evaluarEstados();
+
+            // Solo atacamos si sigue vivo y no está congelado
+            if (j1.estaVivo() && j1.isPuedeAtacar()) {
+                int danio1 = Math.max(0, j1.ataque() - j2.defensa());
+                j2.recibirDanio(danio1);
+                System.out.println(j1.getNombre() + " ataca a " + j2.getNombre() + " con " + danio1 + " de daño.");
+
+                // --- PROBABILIDAD DE ESTADOS ---
+                Random prob = new Random();
+                int suerte = prob.nextInt(100); // Genera un número del 0 al 99
+
+                // 15% de probabilidad de ENVENENAR al rival
+                if (suerte < 15 && !j2.tieneEstado(Envenenado.class)) {
+                    j2.recibirEstados(new Envenenado(3, 5)); // 3 turnos, 5 de daño
+                    System.out.println("¡" + j1.getNombre() + " ha envenenado a " + j2.getNombre() + "!");
+                } // 10% de probabilidad de CONGELAR al rival
+                else if (suerte >= 15 && suerte < 25 && !j2.tieneEstado(Congelado.class)) {
+                    j2.recibirEstados(new Congelado(1)); // 1 turno sin atacar
+                    System.out.println("¡" + j1.getNombre() + " ha congelado a " + j2.getNombre() + "!");
+                } // 15% de probabilidad de AUMENTAR SU PROPIA FUERZA
+                else if (suerte >= 25 && suerte < 40 && !j1.tieneEstado(AumentarFuerza.class)) {
+                    j1.recibirEstados(new AumentarFuerza(3, 10)); // 3 turnos, +10 de fuerza
+                }
+
+            } else if (!j1.isPuedeAtacar()) {
+                System.out.println(j1.getNombre() + " está impedido para atacar.");
+            }
             int danio1 = Math.max(0, j1.calcularAtaque() - j2.calcularDefensa());
             j2.recibirDanio(danio1);
             System.out.println(j1.getNombre() + " ataca a " + j2.getNombre() + " con " + danio1 + " de daño.");
@@ -32,15 +63,42 @@ public class Problema1_Combate {
             if (!j2.estaVivo()) {
                 break;
             }
+            // --- TURNO JUGADOR 2 ---
+            j2.setPuedeAtacar(true);
+            j2.evaluarEstados();
 
+            if (j2.estaVivo() && j2.isPuedeAtacar()) {
+                int danio2 = Math.max(0, j2.ataque() - j1.defensa());
+                j1.recibirDanio(danio2);
+                System.out.println(j2.getNombre() + " ataca a " + j1.getNombre() + " con " + danio2 + " de daño.");
+
+                // --- PROBABILIDAD DE ESTADOS PARA EL JUGADOR 2 ---
+                Random prob = new Random();
+                int suerte = prob.nextInt(100);
+
+                // 15% de probabilidad de ENVENENAR al rival 
+                if (suerte < 15 && !j1.tieneEstado(Envenenado.class)) {
+                    j1.recibirEstados(new Envenenado(3, 5)); // 3 turnos, 5 de daño
+                    System.out.println("¡" + j2.getNombre() + " ha envenenado a " + j1.getNombre() + "!");
+                } // 10% de probabilidad de CONGELAR al rival 
+                else if (suerte >= 15 && suerte < 25 && !j1.tieneEstado(Congelado.class)) {
+                    j1.recibirEstados(new Congelado(1)); // 1 turno sin atacar
+                    System.out.println("¡" + j2.getNombre() + " ha congelado a " + j1.getNombre() + "!");
+                } // 15% de probabilidad de AUMENTAR SU PROPIA FUERZA (j2)
+                else if (suerte >= 25 && suerte < 40 && !j2.tieneEstado(AumentarFuerza.class)) {
+                    j2.recibirEstados(new AumentarFuerza(3, 10)); // 3 turnos, +10 de fuerza
+                }
+                // -------------------------------------------------
+
+            } else if (!j2.isPuedeAtacar()) {
+                System.out.println(j2.getNombre() + " está impedido para atacar.");
+            }
             int danio2 = Math.max(0, j2.calcularAtaque() - j1.calcularDefensa());
             j1.recibirDanio(danio2);
             System.out.println(j2.getNombre() + " ataca a " + j1.getNombre() + " con " + danio2 + " de daño.");
         }
 
-        Problema1_Jugadores ganador = j1.estaVivo() ? j1 : j2;
-        System.out.println("¡" + ganador.getNombre() + " gana el combate!");
-        ganador.subirNivel();
+        }
     }
 
     public static void batallaAleatoria(Problema1_Usuario u1, Problema1_Usuario u2) {
