@@ -29,7 +29,7 @@ public class Congelado implements IEstadoAlterado{
 
     @Override
     public boolean haTerminado() {
-        // La misma lógica de caducidad que el veneno
+        
         return turnosRestantes <= 0;
     }
 }

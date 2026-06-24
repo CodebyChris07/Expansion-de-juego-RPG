@@ -12,7 +12,7 @@ public class AumentarFuerza implements IEstadoAlterado {
 
     private int turnos;
     private int bonoFuerza;
-    private boolean aplicado = true;
+    private boolean aplicado = false;
 
     public AumentarFuerza(int turnos, int bonoFuerza) {
         this.turnos = turnos;
@@ -36,6 +36,7 @@ public class AumentarFuerza implements IEstadoAlterado {
 
     @Override
     public boolean haTerminado() {
+        return turnos <=0;
     }
 
 }
