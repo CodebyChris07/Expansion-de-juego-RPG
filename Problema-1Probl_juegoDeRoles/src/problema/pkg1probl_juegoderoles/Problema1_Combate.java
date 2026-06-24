@@ -22,8 +22,12 @@ public class Problema1_Combate {
             return;
         }
 
+        Random random = new Random();
         System.out.println("\n¡Comienza el combate entre " + j1.getNombre() + " y " + j2.getNombre() + "!");
         while (j1.estaVivo() && j2.estaVivo()) {
+
+            int danio1 = calcularDanioDelTurno(j1, j2, random);
+
 
             // --- TURNO JUGADOR 1 ---
             // Reseteamos el  ataque y aplicamos efectos (veneno, congelado, etc)
@@ -63,6 +67,10 @@ public class Problema1_Combate {
             if (!j2.estaVivo()) {
                 break;
             }
+
+
+            int danio2 = calcularDanioDelTurno(j2, j1, random);
+
             // --- TURNO JUGADOR 2 ---
             j2.setPuedeAtacar(true);
             j2.evaluarEstados();
@@ -94,11 +102,38 @@ public class Problema1_Combate {
                 System.out.println(j2.getNombre() + " está impedido para atacar.");
             }
             int danio2 = Math.max(0, j2.calcularAtaque() - j1.calcularDefensa());
+
             j1.recibirDanio(danio2);
             System.out.println(j2.getNombre() + " ataca a " + j1.getNombre() + " con " + danio2 + " de daño.");
+
+            // Al finalizar la ronda completa, ambos personajes avanzan su turno
+            // (reduce cooldown y regenera energía).
+            j1.avanzarTurno();
+            j2.avanzarTurno();
         }
 
         }
+    }
+
+    /**
+     * Calcula el daño que un atacante infringe a su rival en el turno
+     * actual. Con una probabilidad del 30% el atacante intenta usar su
+     * habilidad especial; si no está disponible (cooldown o energía
+     * insuficiente) se captura la excepción y se recurre al ataque normal.
+     */
+    private static int calcularDanioDelTurno(Problema1_Jugadores atacante, Problema1_Jugadores defensor, Random random) {
+        boolean intentaHabilidad = random.nextInt(100) < 30;
+
+        if (intentaHabilidad) {
+            try {
+                int danioHabilidad = atacante.usarHabilidadEspecial();
+                return Math.max(0, danioHabilidad - defensor.defensa());
+            } catch (Problema1_SinEnergiaException ex) {
+                System.out.println(ex.getMessage() + " Realiza un ataque normal en su lugar.");
+            }
+        }
+
+        return Math.max(0, atacante.ataque() - defensor.defensa());
     }
 
     public static void batallaAleatoria(Problema1_Usuario u1, Problema1_Usuario u2) {
