@@ -24,28 +24,36 @@ public class Problema1_Combate {
 
         Random random = new Random();
         System.out.println("\n¡Comienza el combate entre " + j1.getNombre() + " y " + j2.getNombre() + "!");
-
         while (j1.estaVivo() && j2.estaVivo()) {
 
             // --- TURNO JUGADOR 1 ---
+            // Reseteamos el  ataque y aplicamos efectos (veneno, congelado, etc)
             j1.setPuedeAtacar(true);
             j1.evaluarEstados();
 
+            // Solo atacamos si sigue vivo y no está congelado
             if (j1.estaVivo() && j1.isPuedeAtacar()) {
                 int danio1 = calcularDanioDelTurno(j1, j2, random);
                 j2.recibirDanio(danio1);
                 System.out.println(j1.getNombre() + " ataca a " + j2.getNombre() + " con " + danio1 + " de daño.");
 
-                int suerte = random.nextInt(100);
+                // --- PROBABILIDAD DE ESTADOS ---
+                Random prob = new Random();
+                int suerte = prob.nextInt(100); // Genera un número del 0 al 99
+
+                // 15% de probabilidad de ENVENENAR al rival
                 if (suerte < 15 && !j2.tieneEstado(Envenenado.class)) {
-                    j2.recibirEstados(new Envenenado(3, 5));
+                    j2.recibirEstados(new Envenenado(3, 5)); // 3 turnos, 5 de daño
                     System.out.println("¡" + j1.getNombre() + " ha envenenado a " + j2.getNombre() + "!");
-                } else if (suerte >= 15 && suerte < 25 && !j2.tieneEstado(Congelado.class)) {
-                    j2.recibirEstados(new Congelado(1));
+                } // 10% de probabilidad de CONGELAR al rival
+                else if (suerte >= 15 && suerte < 25 && !j2.tieneEstado(Congelado.class)) {
+                    j2.recibirEstados(new Congelado(1)); // 1 turno sin atacar
                     System.out.println("¡" + j1.getNombre() + " ha congelado a " + j2.getNombre() + "!");
-                } else if (suerte >= 25 && suerte < 40 && !j1.tieneEstado(AumentarFuerza.class)) {
-                    j1.recibirEstados(new AumentarFuerza(3, 10));
+                } // 15% de probabilidad de AUMENTAR SU PROPIA FUERZA
+                else if (suerte >= 25 && suerte < 40 && !j1.tieneEstado(AumentarFuerza.class)) {
+                    j1.recibirEstados(new AumentarFuerza(3, 10)); // 3 turnos, +10 de fuerza
                 }
+
             } else if (!j1.isPuedeAtacar()) {
                 System.out.println(j1.getNombre() + " está impedido para atacar.");
             }
@@ -63,23 +71,34 @@ public class Problema1_Combate {
                 j1.recibirDanio(danio2);
                 System.out.println(j2.getNombre() + " ataca a " + j1.getNombre() + " con " + danio2 + " de daño.");
 
-                int suerte = random.nextInt(100);
+                // --- PROBABILIDAD DE ESTADOS PARA EL JUGADOR 2 ---
+                Random prob = new Random();
+                int suerte = prob.nextInt(100);
+
+                // 15% de probabilidad de ENVENENAR al rival 
                 if (suerte < 15 && !j1.tieneEstado(Envenenado.class)) {
-                    j1.recibirEstados(new Envenenado(3, 5));
+                    j1.recibirEstados(new Envenenado(3, 5)); // 3 turnos, 5 de daño
                     System.out.println("¡" + j2.getNombre() + " ha envenenado a " + j1.getNombre() + "!");
-                } else if (suerte >= 15 && suerte < 25 && !j1.tieneEstado(Congelado.class)) {
-                    j1.recibirEstados(new Congelado(1));
+                } // 10% de probabilidad de CONGELAR al rival 
+                else if (suerte >= 15 && suerte < 25 && !j1.tieneEstado(Congelado.class)) {
+                    j1.recibirEstados(new Congelado(1)); // 1 turno sin atacar
                     System.out.println("¡" + j2.getNombre() + " ha congelado a " + j1.getNombre() + "!");
-                } else if (suerte >= 25 && suerte < 40 && !j2.tieneEstado(AumentarFuerza.class)) {
-                    j2.recibirEstados(new AumentarFuerza(3, 10));
+                } // 15% de probabilidad de AUMENTAR SU PROPIA FUERZA 
+                else if (suerte >= 25 && suerte < 40 && !j2.tieneEstado(AumentarFuerza.class)) {
+                    j2.recibirEstados(new AumentarFuerza(3, 10)); // 3 turnos, +10 de fuerza
                 }
+                // -------------------------------------------------
+
             } else if (!j2.isPuedeAtacar()) {
                 System.out.println(j2.getNombre() + " está impedido para atacar.");
             }
 
+            // Al finalizar la ronda completa, ambos personajes avanzan su turno
+            // (reduce cooldown y regenera energía).
             j1.avanzarTurno();
             j2.avanzarTurno();
         }
+
     }
 
     /**

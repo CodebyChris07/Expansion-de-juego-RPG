@@ -102,7 +102,6 @@ public class Problema1_Arquero extends Problema1_Jugadores {
 
     @Override
     public String toString() {
-
         return "Arquero [" + nombre + "] | Nivel: " + nivelExperiencia
                 + " | Vida: " + vida + " | Flechas: " + flechas
                 + " | Puntería: " + punteria
